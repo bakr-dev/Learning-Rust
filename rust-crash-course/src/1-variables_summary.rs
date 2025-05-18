@@ -23,8 +23,8 @@ fn greet(name: &str) {
 // 3- Rust Detects Data Types Automatically (Type Inference)
 // Rust can often infer the data type of a variable based on the value
 // assigned to it. However, you can also explicitly specify the type.
-let inferred_number = 42;       // Rust infers i32
-let inferred_float = 3.14;      // Rust infers f64
+let inferred_number = 42;           // Rust infers i32
+let inferred_float = 3.14;          // Rust infers f64
 let explicit_string: String = String::from("Hello"); // Explicit type annotation
 
 println!("Inferred number: {}", inferred_number);
@@ -62,8 +62,13 @@ println!("Integer as float: {}", float_from_int);
 let explicit_number: i32 = 100; // Type annotation before the variable name
 println!("Explicit number: {}", explicit_number);
 
-// You wouldn't typically write something like:
+// Invalid syntax (type annotation at the end of the variable name):
 // let strange_declaration = 200 i64; // This is not valid Rust syntax
+// let another_strange_declaration = 200i64; // Also not valid for variable declaration
+
+// However, you can specify the type of a literal directly:
+let literal_with_type = 20u8;
+println!("Literal with explicit type: {}", literal_with_type);
 
 // 7- Integer Types (Which Auto Detected and Which Should Specify)
 // Rust's default integer type is `i32`. If you don't specify a type for
@@ -72,13 +77,19 @@ println!("Explicit number: {}", explicit_number);
 // or architecture-dependent sizes (`isize`, `usize`), you often need to
 // specify the type explicitly, especially when there's a specific reason
 // for using a particular size or signedness.
-let default_int = 50;       // Inferred as i32
-let small_unsigned: u8 = 255; // Explicitly u8
+let default_int = 50;           // Inferred as i32
+let small_unsigned: u8 = 255;   // Explicitly u8
 let large_signed: i64 = -10000000000; // Explicitly i64
 
 println!("Default integer: {}", default_int);
 println!("Small unsigned integer: {}", small_unsigned);
 println!("Large signed integer: {}", large_signed);
+
+// You can also specify the type directly on the literal:
+let literal_u8 = 10_u8;
+let literal_i64 = -50_i64;
+println!("Literal u8: {}", literal_u8);
+println!("Literal i64: {}", literal_i64);
 
 // 8- Operators
 // Rust supports standard arithmetic operators (+, -, *, /, %), comparison
