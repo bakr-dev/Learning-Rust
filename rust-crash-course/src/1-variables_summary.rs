@@ -56,17 +56,20 @@ println!("Integer as string: {}", string_from_int);
 let float_from_int = integer_val as f64; // Explicit type casting
 println!("Integer as float: {}", float_from_int);
 
-// 6- Data Types Auto Detection and Not, and Data Types at End of Value (Not Typical)
-// As seen in point 3, Rust auto-detects types. Explicit type annotations are
-// done *before* the variable name, not at the end of the value.
-let explicit_number: i32 = 100; // Type annotation before the variable name
+// 6- Data Type Inference and Explicit Annotation
+// As seen in point 3, Rust can often infer types automatically. You can also
+// explicitly annotate types before the variable name. Specifying types at
+// the end of the variable name (e.g., `let x = 5 i32;`) is not valid for
+// variable declarations. However, you can specify the type of a literal
+// directly using a suffix (e.g., `20u8`).
+let explicit_number: i32 = 100; // Explicit type annotation before the variable name
 println!("Explicit number: {}", explicit_number);
 
 // Invalid syntax (type annotation at the end of the variable name):
 // let strange_declaration = 200 i64; // This is not valid Rust syntax
 // let another_strange_declaration = 200i64; // Also not valid for variable declaration
 
-// However, you can specify the type of a literal directly:
+// Valid syntax for specifying the type of a literal:
 let literal_with_type = 20u8;
 println!("Literal with explicit type: {}", literal_with_type);
 
