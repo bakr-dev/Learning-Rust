@@ -368,7 +368,7 @@ fn main() {
     //    variables are valid and own their own data.  Stack-only data can be Copy.
 
     // -------------------------------------------------------------------------
-    // 21. Different Ownership Scenarios (More Details)
+    // 22. Different Ownership Scenarios (More Details)
     // -------------------------------------------------------------------------
     // Rust's ownership system governs how memory is managed. Here's a summary of the key behaviors:
 
