@@ -366,4 +366,57 @@ fn main() {
     //    allows you to use a value without taking ownership.
     // 3. Copying: Types that implement the `Copy` trait are copied when assigned. Both
     //    variables are valid and own their own data.  Stack-only data can be Copy.
+
+    // -------------------------------------------------------------------------
+    // 21. Different Ownership Scenarios (More Details)
+    // -------------------------------------------------------------------------
+    // Rust's ownership system governs how memory is managed. Here's a summary of the key behaviors:
+
+    // 1. Moving Ownership:
+    //    - When a non-`Copy` type (like `String`, `Vec`, or other heap-allocated structures)
+    //      is assigned to a new variable, the ownership of the data moves.
+    //    - The original variable becomes invalid to prevent issues like double freeing memory.
+    //    - Example:
+    //      ```rust
+    //      let s1 = String::from("hello");
+    //      let s2 = s1; // Ownership moves from s1 to s2. s1 is no longer usable.
+    //      ```
+
+    // 2. Borrowing (References):
+    //    - References allow you to use a value without taking ownership.
+    //    - Immutable references (`&`) permit reading the data, and multiple immutable
+    //      references to the same value can exist.
+    //    - Mutable references (`&mut`) allow modifying the data, but only one mutable
+    //      reference can exist for a particular value within a given scope.
+    //    - References do not own the data; the original owner is responsible for deallocation.
+    //    - Example:
+    //      ```rust
+    //      let s = String::from("world");
+    //      let r1 = &s;        // Immutable borrow
+    //      let r2 = &s;        // Another immutable borrow
+    //      let r3 = &mut s;   // Mutable borrow (only if no immutable borrows exist)
+    //      ```
+
+    // 3. Copying:
+    //    - Types that implement the `Copy` trait (typically those with a fixed size stored on the stack,
+    //      like integers, booleans, characters, and certain tuples/arrays) are copied when assigned.
+    //    - This creates an independent copy of the value, and both the original and the new variable
+    //      remain valid.
+    //    - Example:
+    //      ```rust
+    //      let x = 5;
+    //      let y = x; // The value of x is copied to y. Both are valid.
+    //      ```
+
+    // To create a copy of heap-allocated data (like `String` or `Vec`), you need to explicitly
+    // use the `.clone()` method. This performs a deep copy, meaning it allocates new memory
+    // on the heap and copies the actual data. After cloning, both variables will own their
+    // own separate copies of the heap data.
+
+    // Example of cloning heap data:
+    // ```rust
+    // let s1 = String::from("heap data");
+    // let s2 = s1.clone(); // Creates a new String on the heap with the same content as s1.
+    // println!("s1: {}, s2: {}", s1, s2); // Both s1 and s2 are now valid and own separate data.
+    // ```
 }
