@@ -287,20 +287,30 @@ fn main() {
     // You cannot have a mutable reference if there are any immutable references
     // active in the same scope. This prevents the data being mutated unexpectedly
     // while other parts of the code are reading it, ensuring data consistency.
+
+    let mut data2 = vec![10, 20, 30];
+
+    // Start of a new scope
     {
-        let data2 = vec![10, 20, 30];
         let immutable_ref1 = &data2[0];
         let immutable_ref2 = &data2[1];
         println!("Immutable refs: {}, {}", immutable_ref1, immutable_ref2);
-
-        let mutable_ref = &mut data2; // Compile-time error: cannot borrow `data2` as mutable because it is also borrowed as immutable
+        // The immutable references' scope ends here, before the mutable reference is created
     }
+    // End of the scope
 
-    // When The immutable references go out of scope.
-
-    let mutable_ref2 = &mut data2; // Now you can have a mutable reference
+    let mutable_ref2 = &mut data2; // Now you can have a mutable reference because the immutable ones are out of scope
     mutable_ref2.push(40);
     println!("Modified data2: {:?}", data2);
+
+    // Example showing the error case
+    // {
+    // let mut data2 = vec![10, 20, 30];
+    //     let immutable_ref1 = &data2[0];
+    //     let mutable_ref2 = &mut data2; // Error: cannot borrow `data2` as mutable because it is also borrowed as immutable
+    //     println!("Immutable ref: {}", immutable_ref1);
+    //     mutable_ref2.push(40);
+    // }
 
     // -------------------------------------------------------------------------
     // 19. Trying Mutable References When Immutable References Are Out of Scope

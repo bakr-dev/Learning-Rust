@@ -1,9 +1,10 @@
 #![deny(clippy::all)]
 fn main() {
-    let mut value = 10;
-    let ref1 = &mut value;
-    // let ref2 = &mut value; // Compile-time error: cannot borrow `value` as mutable more than once at a time
-
-    *ref1 += 5;
-    println!("Value: {}", value);
+    // Example showing the error case
+    // {
+    //     let immutable_ref1 = &data2[0];
+    //     let mutable_ref2 = &mut data2; // Error: cannot borrow `data2` as mutable because it is also borrowed as immutable
+    //     println!("Immutable ref: {}", immutable_ref1);
+    //     mutable_ref2.push(40);
+    // }
 }
