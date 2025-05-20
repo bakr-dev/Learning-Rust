@@ -11,7 +11,8 @@ fn main() {
     // When a function is called, actual values (arguments) are passed to it.
 
     fn greet() {
-        // This function takes no arguments and returns nothing (implicitly `()`).
+        // or  fn greet() -> () {
+        // This function takes no arguments and returns nothing (implicitly `()`). meaning returns unit type.
         println!("Hello from the greet function!");
     }
 
@@ -202,6 +203,7 @@ fn main() {
     // -------------------------------------------------------------------------
     // Rust has closures, which are anonymous functions you can save in a variable or pass to other functions.
     // They can capture values from the scope in which they're defined.
+    // Closures can take multiple arguments, just like regular functions.
 
     let num = 5;
     let add_five = |x: i32| x + num; // Closure capturing `num` from its environment
@@ -218,6 +220,12 @@ fn main() {
 
     print_greeting();
     // println!("{}", greeting); // Error: value borrowed here after move (because print_greeting took ownership)
+
+    // Example of a closure with multiple arguments:
+    let multiply = |x: i32, y: i32| -> i32 { x * y };
+
+    let product = multiply(4, 6);
+    println!("Product with closure: {}", product);
 
     // -------------------------------------------------------------------------
     // 8. Higher-Order Functions (Functions as Arguments)

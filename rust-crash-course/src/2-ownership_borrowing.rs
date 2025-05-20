@@ -25,6 +25,22 @@ fn main() {
     // s1 is no longer valid after the move to s2
 
     // -------------------------------------------------------------------------
+    // 2.1. Copying: For "Copy" Types
+    // -------------------------------------------------------------------------
+    // Some types, like integers, booleans, characters, and fixed-size arrays,
+    // have a known size at compile time and are stored entirely on the **stack**.
+    // These types implement the `Copy` trait. When assigned to a new variable,
+    // their value is *copied*, not moved. The original variable remains valid.
+
+    let i1 = 5; // i1 owns the value 5 on the stack
+    // Mental model: Stack: | i1: 5 |
+    let i2 = i1; // Value 5 is copied to i2. i1 is still valid.
+    // Mental model: Stack: | i1: 5 | i2: 5 |
+    println!("i1: {}, i2: {}", i1, i2); // Both are usable.
+    // This is different from String because String manages data on the heap,
+    // and copying heap data requires explicit action (`.clone()`).
+
+    // -------------------------------------------------------------------------
     // 3. Borrowing: References
     // -------------------------------------------------------------------------
     // Borrowing allows you to use a value without taking ownership.
