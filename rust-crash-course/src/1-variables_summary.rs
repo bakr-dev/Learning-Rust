@@ -41,8 +41,8 @@ fn main() {
     // assigned to it. This reduces verbosity and improves code readability.
     // However, you can also explicitly specify the type when needed or for clarity.
 
-    let inferred_number = 42;         // Rust infers i32
-    let inferred_float = 3.14;       // Rust infers f64
+    let inferred_number = 42; // Rust infers i32
+    let inferred_float = 3.14; // Rust infers f64
     let explicit_string: String = String::from("Hello"); // Explicit type annotation
 
     println!("Inferred number: {}", inferred_number);
@@ -112,8 +112,8 @@ fn main() {
     // specify the type explicitly, especially when there's a specific reason
     // for using a particular size or signedness, or when the compiler cannot infer the type.
 
-    let default_int = 50;           // Inferred as i32
-    let small_unsigned: u8 = 255;     // Explicitly u8
+    let default_int = 50; // Inferred as i32
+    let small_unsigned: u8 = 255; // Explicitly u8
     let large_signed: i64 = -10000000000; // Explicitly i64
 
     println!("Default integer: {}", default_int);
@@ -222,4 +222,34 @@ fn main() {
     println!("First element: {}", data_tuple.0);
     println!("Second element: {}", data_tuple.1);
     println!("Third element: {}", data_tuple.2);
+
+    // -------------------------------------------------------------------------
+    // 14. Arrays
+    // -------------------------------------------------------------------------
+    // An array is a collection of values of the *same type*, stored in a
+    // fixed-size list. Arrays are useful when you know the exact number of
+    // elements you need at compile time. They are allocated on the stack.
+
+    // Declaring an array with inferred type and size
+    let numbers = [1, 2, 3, 4, 5];
+    println!("Entire array: {:?}", numbers);
+    println!("First element: {}", numbers[0]);
+    println!("Last element: {}", numbers[4]);
+
+    // Declaring an array with explicit type and size
+    let bytes: [u8; 3] = [255, 128, 0];
+    println!("Bytes array: {:?}", bytes);
+
+    // Declaring an array with repeated initial value
+    let zeroes = [0; 5]; // An array of 5 zeroes
+    println!("Zeroes array: {:?}", zeroes);
+
+    // Arrays are immutable by default, like other variables
+    let mut mutable_array = [10, 20, 30];
+    println!("Mutable array before change: {:?}", mutable_array);
+    mutable_array[0] = 5; // Modifying an element (requires `mut`)
+    println!("Mutable array after change: {:?}", mutable_array);
+
+    // Attempting to access an out-of-bounds index will cause a runtime panic
+    // println!("Out of bounds access: {}", numbers[5]); // This would panic at runtime
 }

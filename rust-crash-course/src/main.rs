@@ -1,5 +1,11 @@
 #![deny(clippy::all)]
+
+fn say_hello(name: &String) {
+    print!("Hello {}", name)
+}
 fn main() {
+    let name = &String::from("John");
+    say_hello(name);
     // Example showing the error case
     // {
     //     let immutable_ref1 = &data2[0];

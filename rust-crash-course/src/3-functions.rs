@@ -247,4 +247,61 @@ fn main() {
     let square_closure = |x: i32| x * x;
     let squared_twice = apply_twice(square_closure, 3); // Closures often implement `Fn`, `FnMut`, or `FnOnce` traits.
     println!("Squared twice: {}", squared_twice);
+
+    // -------------------------------------------------------------------------
+    // 9. Returning Tuples from Functions and Destructuring
+    // -------------------------------------------------------------------------
+    // Functions in Rust can return multiple values by returning a tuple.
+    // Tuples are fixed-size collections of values of different types.
+    // You can then destructure the tuple to assign its individual elements to separate variables.
+
+    fn get_user_info() -> (String, u32, bool) {
+        // This function returns a tuple containing a String, a u32, and a bool
+        let name = String::from("Alice");
+        let age = 30;
+        let is_active = true;
+        (name, age, is_active) // Implicitly returns the tuple
+    }
+
+    let user_data = get_user_info();
+    println!(
+        "User Info (as tuple): Name: {}, Age: {}, Active: {}",
+        user_data.0, user_data.1, user_data.2
+    );
+
+    // Destructuring the tuple into individual variables
+    let (username, user_age, user_status) = get_user_info();
+    println!(
+        "User Info (destructured): Name: {}, Age: {}, Active: {}",
+        username, user_age, user_status
+    );
+
+    fn calculate_stats(numbers: &[i32]) -> (i32, i32, f64) {
+        // This function calculates sum, count, and average, returning them as a tuple
+        let mut sum = 0;
+        let count = numbers.len() as i32;
+        for &num in numbers {
+            sum += num;
+        }
+        let average = if count > 0 {
+            sum as f64 / count as f64
+        } else {
+            0.0
+        };
+        (sum, count, average)
+    }
+
+    let my_numbers = [10, 20, 30, 40, 50];
+    let (total_sum, num_count, avg_val) = calculate_stats(&my_numbers);
+    println!(
+        "Stats: Sum: {}, Count: {}, Average: {}",
+        total_sum, num_count, avg_val
+    );
+
+    let empty_numbers: [i32; 0] = [];
+    let (sum_empty, count_empty, avg_empty) = calculate_stats(&empty_numbers);
+    println!(
+        "Empty Stats: Sum: {}, Count: {}, Average: {}",
+        sum_empty, count_empty, avg_empty
+    );
 }
