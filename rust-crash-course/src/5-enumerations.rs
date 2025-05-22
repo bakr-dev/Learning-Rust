@@ -5,7 +5,7 @@ fn main() {
     // An `enum` allows you to define a type by listing all its possible variants.
     // Think of it as a custom data type where you explicitly name all the valid
     // forms it can take.
-    // Useful for related objects and data
+    // Useful for related objects and variants
 
     enum TrafficLight {
         Red,
@@ -24,43 +24,7 @@ fn main() {
 
 fn main() {
     // -------------------------------------------------------------------------
-    // Example 2: Enums with Associated Data (Tuples and Structs)
-    // -------------------------------------------------------------------------
-    // Enum variants can carry data, allowing you to attach values to each variant.
-    // This makes enums incredibly flexible for representing diverse information.
-
-    // Define a struct to be used inside an enum variant
-    struct User {
-        id: u32,
-        name: String,
-    }
-
-    enum Message {
-        Quit,                       // No data
-        Move { x: i32, y: i32 },    // Anonymous struct (named fields)
-        Write(String),              // Tuple with a single String
-        ChangeColor(i32, i32, i32), // Tuple with three i32s (RGB)
-        Enroll(User),               // Holds an instance of the `User` struct
-    }
-
-    let msg1 = Message::Quit;
-    let msg2 = Message::Move { x: 10, y: 20 };
-    let msg3 = Message::Write(String::from("Hello, Rust!"));
-    let msg4 = Message::ChangeColor(255, 128, 0);
-    let user_alice = User {
-        id: 1,
-        name: String::from("Alice"),
-    };
-    let msg5 = Message::Enroll(user_alice);
-
-    println!("\nExample of enums with associated data:");
-    // We can't directly print enums without deriving `Debug`,
-    // but we can see their creation.
-}
-
-fn main() {
-    // -------------------------------------------------------------------------
-    // Example 3: Using `match` Expressions (Exhaustive Pattern Matching)
+    // Example 2: Using `match` Expressions (Exhaustive Pattern Matching)
     // -------------------------------------------------------------------------
     // The `match` control flow operator compares a value against a series of patterns
     // and executes code based on the first pattern that matches. It's exhaustive,
@@ -106,6 +70,128 @@ fn main() {
     println!("A penny is worth {} cents.", value_in_cents(penny));
     println!("A nickel is worth {} cents.", value_in_cents(nickel));
     println!("A quarter is worth {} cents.", value_in_cents(quarter));
+}
+
+fn main() {
+    // -------------------------------------------------------------------------
+    // Example 3: Enums with Associated Data (Tuples and Structs)
+    // -------------------------------------------------------------------------
+    // Enum variants can carry data, allowing you to attach values to each variant.
+    // This makes enums incredibly flexible for representing diverse information.
+
+    // Define a struct to be used inside an enum variant
+    struct User {
+        id: u32,
+        name: String,
+    }
+
+    // To allow printing enums with associated data for debugging,
+    // we derive the `Debug` trait.
+    #[derive(Debug)]
+    enum Message {
+        Quit,                       // No data
+        Move { x: i32, y: i32 },    // Anonymous struct (named fields)
+        Write(String),              // Tuple with a single String
+        ChangeColor(i32, i32, i32), // Tuple with three i32s (RGB)
+        Enroll(User),               // Holds an instance of the `User` struct
+    }
+
+    let msg1 = Message::Quit;
+    let msg2 = Message::Move { x: 10, y: 20 };
+    let msg3 = Message::Write(String::from("Hello, Rust!"));
+    let msg4 = Message::ChangeColor(255, 128, 0);
+    let user_alice = User {
+        id: 1,
+        name: String::from("Alice"),
+    };
+    let msg5 = Message::Enroll(user_alice);
+
+    println!("\nExample of enums with associated data:");
+    // We can't directly print enums without deriving `Debug`,
+    // but we can see their creation.
+
+    // -------------------------------------------------------------------------
+    // Usage Cases: Extracting Data with `match`
+    // -------------------------------------------------------------------------
+    // The `match` control flow operator is perfect for handling enums
+    // because it allows you to execute different code based on the variant
+    // and extract the associated data.
+
+    println!("\n--- Processing Messages ---");
+
+    fn process_message(msg: Message) {
+        match msg {
+            Message::Quit => {
+                println!("Action: Quitting the application.");
+            }
+            Message::Move { x, y } => {
+                println!("Action: Moving to coordinates ({}, {}).", x, y);
+            }
+            Message::Write(text) => {
+                println!("Action: Writing message: \"{}\"", text);
+            }
+            Message::ChangeColor(r, g, b) => {
+                println!("Action: Changing color to RGB({}, {}, {}).", r, g, b);
+            }
+            Message::Enroll(user) => {
+                println!(
+                    "Action: Enrolling new user: ID {}, Name \"{}\".",
+                    user.id, user.name
+                );
+            }
+        }
+    }
+
+    process_message(msg1);
+    process_message(msg2);
+    process_message(msg3);
+    process_message(msg4);
+    // Note: msg5 was moved into process_message, so we can't reuse it.
+    // If we wanted to, we'd need to clone it or pass a reference.
+    let user_bob = User {
+        id: 2,
+        name: String::from("Bob"),
+    };
+    process_message(Message::Enroll(user_bob));
+
+    println!("\n--- More Direct Usage ---");
+
+    // You can also use `if let` for a more concise way to handle
+    // a single variant of interest, ignoring others.
+
+    let another_msg = Message::Write(String::from("This is a quick note."));
+
+    if let Message::Write(content) = another_msg {
+        println!("Quick write message found: \"{}\"", content);
+    } else {
+        println!("This message was not a 'Write' message.");
+    }
+
+    let third_msg = Message::Quit;
+    if let Message::Move { x, y } = third_msg {
+        println!("This won't print as third_msg is not a Move message.");
+    } else {
+        println!("This message was not a 'Move' message.");
+    }
+
+    // You can also create functions that return enums
+    fn get_user_status(user_id: u32) -> Message {
+        if user_id % 2 == 0 {
+            Message::Quit // Simulating a user logging out
+        } else {
+            Message::Enroll(User {
+                id: user_id,
+                name: format!("User{}", user_id),
+            })
+        }
+    }
+
+    println!("\n--- Dynamic Enum Creation and Processing ---");
+    let status_for_user_3 = get_user_status(3);
+    process_message(status_for_user_3);
+
+    let status_for_user_4 = get_user_status(4);
+    process_message(status_for_user_4);
 }
 
 fn main() {
