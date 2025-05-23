@@ -96,29 +96,6 @@ fn main() {
         Enroll(User),               // Holds an instance of the `User` struct
     }
 
-    let msg1 = Message::Quit;
-    let msg2 = Message::Move { x: 10, y: 20 };
-    let msg3 = Message::Write(String::from("Hello, Rust!"));
-    let msg4 = Message::ChangeColor(255, 128, 0);
-    let user_alice = User {
-        id: 1,
-        name: String::from("Alice"),
-    };
-    let msg5 = Message::Enroll(user_alice);
-
-    println!("\nExample of enums with associated data:");
-    // We can't directly print enums without deriving `Debug`,
-    // but we can see their creation.
-
-    // -------------------------------------------------------------------------
-    // Usage Cases: Extracting Data with `match`
-    // -------------------------------------------------------------------------
-    // The `match` control flow operator is perfect for handling enums
-    // because it allows you to execute different code based on the variant
-    // and extract the associated data.
-
-    println!("\n--- Processing Messages ---");
-
     fn process_message(msg: Message) {
         match msg {
             Message::Quit => {
@@ -141,6 +118,26 @@ fn main() {
             }
         }
     }
+
+    let msg1 = Message::Quit;
+    let msg2 = Message::Move { x: 10, y: 20 };
+    let msg3 = Message::Write(String::from("Hello, Rust!"));
+    let msg4 = Message::ChangeColor(255, 128, 0);
+    let user_alice = User {
+        id: 1,
+        name: String::from("Alice"),
+    };
+    let msg5 = Message::Enroll(user_alice);
+
+    println!("\nExample of enums with associated data:");
+    // We can't directly print enums without deriving `Debug`,
+    // but we can see their creation.
+
+    // ---------
+    // Usage Cases: Extracting Data with `match`
+    // ---------
+
+    println!("\n--- Processing Messages ---");
 
     process_message(msg1);
     process_message(msg2);

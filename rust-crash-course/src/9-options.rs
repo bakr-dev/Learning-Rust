@@ -37,17 +37,36 @@ fn main() {
     println!("No number: {:?}", no_number);
     println!("No string: {:?}", no_string);
 
+    fn find_user_by_id(id: u32) -> Option<String> {
+        // This function "wraps" the String in an Option, because a user with a given ID might not exist.
+        if id == 1 {
+            Some(String::from("Alice")) // User found, wrap the name in Some
+        } else {
+            None // User not found, return None
+        }
+    }
+
+    // main function added to make the example runnable
+    let user1 = find_user_by_id(1);
+    println!("User 1: {:?}", user1); // Output: User 1: Some("Alice")
+
+    let user2 = find_user_by_id(2);
+    println!("User 2: {:?}", user2); // Output: User 2: None
+
     // -------------------------------------------------------------------------
     // 2. Unwrapping Options Safely
     // -------------------------------------------------------------------------
     // Safe unwrapping methods force you to handle the `None` case, preventing panics.
 
     // a. Using `match` expression: The most exhaustive and common way.
+    // Meaning and Purpose: The `match` expression allows you to specify distinct code paths for `Some(value)`
+    // (where you can access the inner `value`) and `None`. This is the most explicit and thorough way to
+    // handle `Option`s, as it forces you to think about what to do in both scenarios.
     println!("\n--- Unwrapping Safely with `match` ---");
     let config_value = Some("debug");
     match config_value {
-        Some(value) => println!("Configuration value: {}", value),
-        None => println!("Configuration value is missing."),
+        Some(value) => println!("Configuration value: {}", value), // Handles the case where a value is present
+        None => println!("Configuration value is missing."), // Handles the case where no value is present
     }
 
     let user_input: Option<i32> = None;
@@ -57,19 +76,29 @@ fn main() {
     }
 
     // b. Using `if let`: Concise way to handle only the `Some` case.
+    // Meaning and Purpose: `if let` provides a more concise way to handle `Option`s when you are primarily
+    // interested in the `Some` variant and want to execute code only if a value is present. You can
+    // optionally include an `else` block to handle the `None` case, but it's often omitted if the `None`
+    // case requires no specific action beyond skipping the `if` block.
     println!("\n--- Unwrapping Safely with `if let` ---");
     let favorite_color = Some(String::from("blue"));
     if let Some(color) = favorite_color {
-        println!("My favorite color is {}", color);
+        println!("My favorite color is {}", color); // Code executed only if `favorite_color` is `Some`
     } else {
-        println!("I don't have a favorite color.");
+        println!("I don't have a favorite color."); // Optional `else` block for `None`
     }
     // `favorite_color` is moved into `color` if `Some`.
     // println!("{:?}", favorite_color); // Error: value moved
 
+    // Explanation of `if let Some(color) = favorite_color`:
+    // Some(color): This is a pattern. It attempts to match the `favorite_color` variable against the `Some` variant of the `Option` enum.
+    // If `favorite_color` is `Some(value)`, then the `value` inside `Some` will be "destructured" and bound to a new variable named `color`.
+    // = favorite_color: This indicates that we are attempting to match the pattern `Some(color)` against the actual value of `favorite_color`.
+    // In essence: This line asks: "If `favorite_color` is `Some` value, let's call that value `color`, and then execute the code inside the curly braces."
+
     let mut optional_score = Some(95);
     if let Some(score) = &mut optional_score {
-        // Borrow mutably to modify
+        // Borrow mutably to modify the inner value without taking ownership
         *score += 5;
         println!("Updated score: {}", score);
     }
@@ -78,28 +107,37 @@ fn main() {
     // -------------------------------------------------------------------------
     // 3. Unwrapping Options Unsafely (and Force Unwrapping)
     // -------------------------------------------------------------------------
-    // These methods will panic if the `Option` is `None`. Use them only when
-    // you are absolutely certain the `Option` will be `Some`.
+    // These methods will panic if the `Option` is `None`. Using them is often referred to as "force unwrapping."
+    // You should only use these when you are absolutely, 100% certain that the `Option` will contain a `Some`
+    // value at runtime. If there's any doubt, use safe unwrapping methods. Using these in situations where
+    // `None` is possible is a common source of runtime crashes and should be avoided in most production code.
 
     // a. `unwrap()`: Panics with a default message if `None`.
+    // Meaning and Purpose: `unwrap()` directly extracts the inner value from a `Some` `Option`. If the `Option`
+    // is `None`, it will immediately **panic** (crash the program) with a generic error message. This is useful
+    // for prototyping or in situations where `None` truly represents an unrecoverable error that indicates a bug
+    // in your logic.
     println!("\n--- Unwrapping Unsafely with `unwrap()` ---");
     let safe_value = Some(42);
-    let value = safe_value.unwrap();
+    let value = safe_value.unwrap(); // This is safe here because `safe_value` is explicitly `Some`.
     println!("Unwrapped value: {}", value);
 
     // let dangerous_value: Option<i32> = None;
-    // let _ = dangerous_value.unwrap(); // This line would panic at runtime!
-    // println!("This line will not be reached if unwrap() panics.");
+    // let _ = dangerous_value.unwrap(); // This line would panic at runtime if uncommented!
+    // println!("This line will not be reached if unwrap() panics.")
 
     // b. `expect(message)`: Panics with a custom message if `None`.
-    // Useful for providing more context about why a panic occurred.
+    // Meaning and Purpose: `expect()` functions identically to `unwrap()`, meaning it will panic if the `Option`
+    // is `None`. However, `expect()` allows you to provide a custom panic message. This is extremely useful for
+    // debugging, as it provides more context about *why* the program crashed, making it easier to identify the
+    // source of the unexpected `None` value.
     println!("\n--- Unwrapping Unsafely with `expect()` ---");
     let file_content = Some(String::from("File data."));
-    let content = file_content.expect("Expected file content, but it was missing!");
+    let content = file_content.expect("Expected file content, but it was missing!"); // This is safe here.
     println!("File content: {}", content);
 
     // let missing_file: Option<String> = None;
-    // let _ = missing_file.expect("Failed to read configuration file."); // This line would panic!
+    // let _ = missing_file.expect("Failed to read configuration file; this file should always exist!"); // This line would panic if uncommented!
 
     // -------------------------------------------------------------------------
     // 4. Mutating Option Values
