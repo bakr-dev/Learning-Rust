@@ -63,6 +63,7 @@ fn main() {
     // (where you can access the inner `value`) and `None`. This is the most explicit and thorough way to
     // handle `Option`s, as it forces you to think about what to do in both scenarios.
     println!("\n--- Unwrapping Safely with `match` ---");
+    // Unwrapping here meaning access inner value which is string "debug"
     let config_value = Some("debug");
     match config_value {
         Some(value) => println!("Configuration value: {}", value), // Handles the case where a value is present
@@ -80,7 +81,9 @@ fn main() {
     // interested in the `Some` variant and want to execute code only if a value is present. You can
     // optionally include an `else` block to handle the `None` case, but it's often omitted if the `None`
     // case requires no specific action beyond skipping the `if` block.
+
     println!("\n--- Unwrapping Safely with `if let` ---");
+    // Unwrapping here meaning access inner value which is string "blue"
     let favorite_color = Some(String::from("blue"));
     if let Some(color) = favorite_color {
         println!("My favorite color is {}", color); // Code executed only if `favorite_color` is `Some`
