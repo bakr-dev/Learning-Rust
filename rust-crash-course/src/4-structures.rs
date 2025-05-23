@@ -184,7 +184,9 @@ fn main() {
     println!("New width of rect1: {}", rect1.width);
     println!("c1 red value: {}", c1.get_red());
     c1.set_red(255);
-    println!("c1 new red value: {}", c1.get_red());
+    println!("c1 new red value: {}", c1.0); // Accessing tuple struct field directly
+    // Using the method for consistency, though direct access is fine here.
+    println!("c1 new red value (via method): {}", c1.get_red());
 
     let c2 = Color::create_color(100, 150, 200);
     println!("c2 color values R={}, G={}, B={}", c2.0, c2.1, c2.2);
@@ -241,4 +243,102 @@ fn main() {
         my_point.get_x(),
         my_point.get_y()
     );
+
+    // -------------------------------------------------------------------------
+    // 8. The '.' (Dot) and '::' (Double Colon) Operators with Structs
+    // -------------------------------------------------------------------------
+    // These two operators are fundamental for interacting with structs in Rust,
+    // but they serve distinctly different purposes.
+
+    // 8.1. The '.' (Dot) Operator: Accessing Members of a Struct *Instance*
+    // ---------------------------------------------------------------------
+    // The dot operator is used to access fields (data) and instance methods
+    // (functions defined in an `impl` block that take `self`, `&self`, or `&mut self`)
+    // that belong to a *specific instance* of a struct.
+    //
+    // Think of it as navigating within a concrete object you've already created.
+    // You need an *existing variable* that holds a struct instance to use the `.` operator.
+
+    println!("\n--- Using the '.' (Dot) Operator ---");
+    let mut my_user = User::new(
+        String::from("dev_rust"),
+        String::from("rust_dev@example.com"),
+    );
+
+    // Accessing a field of the 'my_user' instance
+    println!("My user's username (via '.'): {}", my_user.username);
+
+    // Calling an instance method on the 'my_user' instance
+    // The `sign_in_count` here is a field on the instance.
+    // The `email` field is also accessed directly on the instance.
+    // This implicitly assumes a method like `get_info` if one were defined,
+    // but here we're directly accessing fields via the dot operator.
+    println!(
+        "My user's sign in count (via '.'): {}",
+        my_user.sign_in_count
+    );
+
+    // Modify a field using the dot operator (requires `mut` on the instance)
+    my_user.sign_in_count += 1;
+    println!(
+        "My user's updated sign in count (via '.'): {}",
+        my_user.sign_in_count
+    );
+
+    let mut small_rect = Rectangle {
+        width: 5,
+        height: 10,
+    };
+    // Calling an instance method `area` on the `small_rect` instance
+    println!("Area of small_rect (via '.'): {}", small_rect.area());
+    // Calling a mutable instance method `set_width` on the `small_rect` instance
+    small_rect.set_width(7);
+    println!("New width of small_rect (via '.'): {}", small_rect.width);
+
+    // 8.2. The '::' (Double Colon) Operator: Associated Functions and Modules
+    // -----------------------------------------------------------------------
+    // The double colon (`::`) is used for "path-like" access.
+    // Its primary uses with structs are:
+    //
+    // a. Calling **Associated Functions (Static Methods)**: These are functions
+    //    that belong to the *struct type itself*, not a specific instance.
+    //    They are often used for constructors (like `new`), factory methods,
+    //    or utility functions that operate on data related to the struct's type
+    //    but don't require an existing instance. You call them directly on the
+    //    struct's name.
+    //
+    // b. Accessing Items within Modules: While not directly related to struct
+    //    instances, `::` is also the standard way to navigate Rust's module
+    //    system (e.g., `std::collections::HashMap`, `crate::my_module::MyStruct`).
+    //    It's about referring to a type or item within its declared path.
+
+    println!("\n--- Using the '::' (Double Colon) Operator ---");
+
+    // Calling the `new` associated function on the `User` *type*
+    // This creates a *new* User instance without needing an existing one.
+    let created_user = User::new(String::from("john@example.com"), String::from("john_doe"));
+    println!(
+        "Created user username (via '::new'): {}",
+        created_user.username
+    );
+
+    // Calling the `square` associated function on the `Rectangle` *type*
+    let perfect_square = Rectangle::square(25);
+    println!(
+        "Perfect square area (via '::square'): {}",
+        perfect_square.area()
+    );
+
+    // Calling the `create_color` associated function on the `Color` *type*
+    let vibrant_color = Color::create_color(255, 100, 0);
+    println!(
+        "Vibrant color RGB (via '::create_color'): {}, {}, {}",
+        vibrant_color.0, vibrant_color.1, vibrant_color.2
+    );
+
+    // General module path example (relevant to structs within modules)
+    // Here, `Vec::new()` is an associated function of the `Vec` type in the standard library.
+    let mut numbers = Vec::new(); // `Vec` is a struct (a generic one)
+    numbers.push(10); // `push` is an instance method on the `numbers` Vec instance
+    println!("Numbers vector: {:?}", numbers);
 }

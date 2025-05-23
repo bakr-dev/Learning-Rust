@@ -229,7 +229,7 @@ fn main() {
     println!("Actual vec (from Some): {:?}", actual_vec);
 
     // -------------------------------------------------------------------------
-    // 7. Unwrap with Functions (`unwrap_or_else`)
+    // 7. Unwrap with Functions (`unwrap_or_else`) Execute Function To get Value
     // -------------------------------------------------------------------------
     // Similar to `unwrap_or`, but the default value is computed by a closure,
     // which is only executed if the `Option` is `None`. This is more efficient
