@@ -2,18 +2,19 @@
 // #[derive(PartialEq)]
 
 fn main() {
-    println!("\n--- Unwrap with Functions (`unwrap_or_else`) ---");
-    let expensive_default = || {
-        println!("Computing expensive default...");
-        // Simulate expensive computation
-        std::thread::sleep(std::time::Duration::from_millis(100));
-        99
-    };
+    println!("\n--- `map` for Ok Values ---");
+    let num_str = "123";
+    let parsed_and_doubled = num_str.parse::<i32>().map(|num| num * 2); // Doubles the number if parsing succeeds
 
-    let val1 = Some(50).unwrap_or_else(expensive_default); // Closure not executed
-    println!("Value 1: {}", val1);
+    match parsed_and_doubled {
+        Ok(val) => println!("Parsed and doubled: {}", val),
+        Err(e) => eprintln!("Error parsing: {}", e),
+    }
 
-    let val2: Option<i32> = None;
-    let val2_result = val2.unwrap_or_else(expensive_default); // Closure IS executed
-    println!("Value 2: {}", val2_result);
+    let bad_num_str = "abc";
+    let parsed_and_doubled_err = bad_num_str.parse::<i32>().map(|num| num * 2); // Error passes through
+    match parsed_and_doubled_err {
+        Ok(val) => println!("Parsed and doubled: {}", val),
+        Err(e) => eprintln!("Error parsing 'abc': {}", e),
+    }
 }

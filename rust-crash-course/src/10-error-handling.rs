@@ -1,7 +1,17 @@
 // This file covers fundamental error handling concepts in Rust, focusing on
 // `panic!` for unrecoverable errors and `Result` for recoverable errors.
 
-fn main() {
+// Import necessary modules for I/O operations
+use std::fs;
+use std::io::{self, Read, Write}; // Import io::Error, Read, and Write traits
+
+// The main function can now return a Result, allowing for error propagation
+// from main itself, especially when using the `?` operator.
+// `Box<dyn std::error::Error>` is a common way to return any kind of error that
+// implements the `Error` trait, without needing to know its exact type.
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("--- Starting Rust Error Handling Examples ---");
+
     // -------------------------------------------------------------------------
     // 1. `panic!` for Unrecoverable Errors
     // -------------------------------------------------------------------------
@@ -10,18 +20,18 @@ fn main() {
     // up data. This is typically used for bugs, unexpected states, or situations
     // where there's no reasonable way to proceed.
 
+    // Uncomment the following lines to see `panic!` in action.
     // let x = 10;
     // let y = 0;
     // if y == 0 {
-    //     panic!("Cannot divide by zero!"); // This would cause a program crash
+    //     panic!("Cannot divide by zero! This is an unrecoverable logic error."); // This would cause a program crash
     // }
     // let result = x / y;
     // println!("Result: {}", result);
 
-    println!("Program continues after potential panic comment.");
+    println!("\nProgram continues after potential panic comment.");
 
-    // `panic!` can also be caused by out-of-bounds array access (demonstrated
-    // in the previous variable concepts file).
+    // `panic!` can also be caused by out-of-bounds array access.
 
     // -------------------------------------------------------------------------
     // 2. `Result` for Recoverable Errors: The `enum` for Success or Failure
@@ -68,207 +78,20 @@ fn main() {
     // `expect()` allows you to provide a custom panic message.
     // These should generally be avoided in production code unless you are
     // absolutely certain the operation will succeed, or if a failure
-    // genuinely indicates an unrecoverable bug.
-
-    println!("\n--- `unwrap()` and `expect()` (Use with Caution!) ---");
-
-    let file_content = std::fs::read_to_string("this_file_does_not_exist.txt");
-
-    // This would panic if the file doesn't exist:
-    // let content = file_content.unwrap();
-    // println!("Content (unwrap): {}", content);
-
-    // This would panic with a custom message if the file doesn't exist:
-    // let content = file_content.expect("Failed to read the file!");
-    // println!("Content (expect): {}", content);
-
-    println!("`unwrap()` and `expect()` examples commented out to prevent panics.");
-
-    // A safe use of `unwrap()` (e.g., parsing a known valid number)
-    let parsed_number = "42".parse::<i32>().unwrap();
-    println!("Parsed number (safe unwrap): {}", parsed_number);
-
-    // -------------------------------------------------------------------------
-    // 5. The `?` Operator for Error Propagation
-    // -------------------------------------------------------------------------
-    // The `?` operator is a concise way to propagate errors. When placed
-    // after a `Result` value, it will:
-    // 1. If the `Result` is `Ok`, unwrap the value and continue.
-    // 2. If the `Result` is `Err`, return the error from the *current* function.
-    // This is incredibly useful for chaining operations that can fail.
-    // Note: The `?` operator can only be used in functions that return a `Result`.
-
-    fn read_username_from_file() -> Result<String, std::io::Error> {
-        let mut f = std::fs::File::open("hello.txt")?; // Propagates error if file opening fails
-        let mut contents = String::new();
-        f.read_to_string(&mut contents)?; // Propagates error if reading fails
-        Ok(contents)
-    }
-
-    // Let's create a dummy file for the `read_username_from_file` example
-    let dummy_file_result = std::fs::write("hello.txt", "Rust User");
-    if let Err(e) = dummy_file_result {
-        eprintln!("Error creating dummy file: {}", e);
-    }
-
-    println!("\n--- `?` Operator for Error Propagation ---");
-
-    match read_username_from_file() {
-        Ok(username) => println!("Username from file: {}", username),
-        Err(e) => println!("Error reading username: {}", e),
-    }
-
-    // Clean up the dummy file
-    let _ = std::fs::remove_file("hello.txt");
-
-    // -------------------------------------------------------------------------
-    // 6. Custom Error Types (Brief Introduction)
-    // -------------------------------------------------------------------------
-    // For more complex applications, you'll often define your own custom
-    // error types using enums to represent different kinds of errors your
-    // functions might encounter. This provides more specific and meaningful
-    // error information.
-
-    #[derive(Debug)] // Required for printing with {:?}
-    enum MyError {
-        NotFound,
-        PermissionDenied,
-        InvalidInput(String),
-    }
-
-    fn do_something_risky(value: i32) -> Result<String, MyError> {
-        if value == 0 {
-            Err(MyError::NotFound)
-        } else if value < 0 {
-            Err(MyError::PermissionDenied)
-        } else if value > 100 {
-            Err(MyError::InvalidInput(format!(
-                "Value {} is too large.",
-                value
-            )))
-        } else {
-            Ok(format!("Operation successful with value: {}", value))
-        }
-    }
-
-    println!("\n--- Custom Error Types ---");
-
-    match do_something_risky(0) {
-        Ok(msg) => println!("{}", msg),
-        Err(e) => println!("Risky operation failed: {:?}", e),
-    }
-
-    match do_something_risky(-5) {
-        Ok(msg) => println!("{}", msg),
-        Err(e) => println!("Risky operation failed: {:?}", e),
-    }
-
-    match do_something_risky(150) {
-        Ok(msg) => println!("{}", msg),
-        Err(e) => println!("Risky operation failed: {:?}", e),
-    }
-
-    match do_something_risky(50) {
-        Ok(msg) => println!("{}", msg),
-        Err(e) => println!("Risky operation failed: {:?}", e),
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// This file covers fundamental error handling concepts in Rust, focusing on
-// `panic!` for unrecoverable errors and `Result` for recoverable errors.
-
-// Import necessary modules for I/O operations
-use std::fs;
-use std::io::{self, Read}; // Import io::Error and Read trait
-
-// The main function can now return a Result, allowing for error propagation
-// from main itself, especially when using the `?` operator.
-// `Box<dyn std::error::Error>` is a common way to return any kind of error that
-// implements the `Error` trait, without needing to know its exact type.
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    println!("--- Starting Error Handling Examples ---");
-
-    // -------------------------------------------------------------------------
-    // 1. `panic!` for Unrecoverable Errors
-    // -------------------------------------------------------------------------
-    // `panic!` is used when a program encounters a serious, unrecoverable
-    // error. It immediately stops execution and unwinds the stack, cleaning
-    // up data. This is typically used for bugs, unexpected states, or situations
-    // where there's no reasonable way to proceed.
-
-    // let x = 10;
-    // let y = 0;
-    // if y == 0 {
-    //     panic!("Cannot divide by zero! This is an unrecoverable logic error."); // This would cause a program crash
-    // }
-    // let result = x / y;
-    // println!("Result: {}", result);
-
-    println!("\nProgram continues after potential panic comment.");
-
-    // `panic!` can also be caused by out-of-bounds array access (demonstrated
-    // in the previous variable concepts file).
-
-    // -------------------------------------------------------------------------
-    // 2. `Result` for Recoverable Errors: The `enum` for Success or Failure
-    // -------------------------------------------------------------------------
-    // `Result<T, E>` is an enum that represents either success (`Ok(T)`) or
-    // failure (`Err(E)`). `T` is the type of the value returned on success,
-    // and `E` is the type of the error returned on failure.
-    // This is Rust's primary mechanism for handling recoverable errors.
-
-    // A simple function that might fail
-    fn safe_divide(numerator: f64, denominator: f64) -> Result<f64, String> {
-        if denominator == 0.0 {
-            Err(String::from("Division by zero is not allowed.")) // Return an error
-        } else {
-            Ok(numerator / denominator) // Return a successful value
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // 3. Handling `Result` with `match` and Expecting Error/Value
-    // -------------------------------------------------------------------------
-    // The `match` expression is the most common way to handle `Result` types.
-    // It allows you to explicitly handle both the `Ok` and `Err` variants.
-
-    println!("\n--- Handling Result with `match` ---");
-
-    let division_result_ok = safe_divide(10.0, 2.0);
-    match division_result_ok {
-        Ok(value) => println!("Successful division: {}", value),
-        Err(error) => println!("Error during division: {}", error), // Expecting an error (but got Ok here)
-    }
-
-    let division_result_err = safe_divide(10.0, 0.0);
-    match division_result_err {
-        Ok(value) => println!("Successful division: {}", value),
-        Err(error) => println!("Error during division: {}", error), // Expecting an error (and got it here)
-    }
-
-    // -------------------------------------------------------------------------
-    // 4. `unwrap()` and `expect()`: Panicking on Error (Use with Caution!)
-    //    Expecting a value from a Result (and panicking if it's an error)
-    // -------------------------------------------------------------------------
-    // `unwrap()` and `expect()` are convenience methods on `Result` that
-    // extract the `Ok` value or `panic!` if the `Result` is an `Err`.
-    // `expect()` allows you to provide a custom panic message.
-    // These should generally be avoided in production code unless you are
-    // absolutely certain the operation will succeed, or if a failure
     // genuinely indicates an unrecoverable bug that should crash the program.
 
     println!("\n--- `unwrap()` and `expect()` (Use with Caution!) ---");
 
-    // Example where we "expect a value" (i.e., expect Ok) and panic if it's an error.
-    // This part is commented out to allow the program to run without crashing.
-    /*
-    let content = fs::read_to_string("non_existent_file.txt").expect("Failed to read the file! I expected this file to exist.");
-    println!("Content (expect): {}", content);
-    */
-    println!("`expect()` example commented out to prevent panics for non-existent file.");
+    // This would panic if the file doesn't exist:
+    // let file_content = fs::read_to_string("this_file_does_not_exist.txt");
+    // let content = file_content.unwrap();
+    // println!("Content (unwrap): {}", content);
+
+    // This would panic with a custom message if the file doesn't exist:
+    // let content = fs::read_to_string("non_existent_file.txt").expect("Failed to read the file! I expected this file to exist.");
+    // println!("Content (expect): {}", content);
+
+    println!("`unwrap()` and `expect()` examples commented out to prevent panics.");
 
     // A relatively safe use of `unwrap()` or `expect()`: when parsing a known valid number.
     let parsed_number = "42".parse::<i32>().unwrap(); // We know "42" is a valid i32, so unwrap is "safe" here.
@@ -300,7 +123,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let _ = fs::remove_file(file_to_create);
 
     // -------------------------------------------------------------------------
-    // 6. Early Exit from Result Errors: The `?` Operator
+    // 6. The `?` Operator for Error Propagation (Early Exit)
     // -------------------------------------------------------------------------
     // The `?` operator is a concise way to propagate errors, enabling "early exit".
     // When placed after an expression that returns a `Result`:
@@ -311,16 +134,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // with the error type being propagated.
 
     fn read_username_from_file() -> Result<String, io::Error> {
-        let mut f = fs::File::open("username.txt")?; // Early exit if file open fails
+        let mut f = fs::File::open("username.txt")?; // Early exit if file open fails, if ok continue to next code
         let mut contents = String::new();
-        f.read_to_string(&mut contents)?; // Early exit if reading fails
+        f.read_to_string(&mut contents)?; // Early exit if reading fails, if ok continue to next code
         Ok(contents)
     }
 
     // Let's create a dummy file for the `read_username_from_file` example
     let _ = fs::write("username.txt", "Rusty_Dev");
 
-    println!("\n--- `?` Operator for Early Exit ---");
+    println!("\n--- `?` Operator for Error Propagation ---");
 
     match read_username_from_file() {
         Ok(username) => println!("Username from file: {}", username),
@@ -365,7 +188,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // `map_err`: Transforms the `Err` value. If the Result is `Ok`, it's passed through unchanged.
     println!("\n--- `map_err` for Err Values ---");
-    let potentially_failing_op: Result<i32, u32> = Err(404);
+    let potentially_failing_op: Result<i32, u32> = Err(404); // Result<i32, u32> meaning return i32 or u32
     let transformed_error = potentially_failing_op.map_err(|err_code| {
         format!("Failed with error code: {}", err_code) // Transforms u32 error into a String error
     });
@@ -384,7 +207,74 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // -------------------------------------------------------------------------
-    // 8. Main Function Returning Result (`fn main() -> Result<(), E>`)
+    // 8. Custom Error Types
+    // -------------------------------------------------------------------------
+    // For more complex applications, you'll often define your own custom
+    // error types using enums to represent different kinds of errors your
+    // functions might encounter. This provides more specific and meaningful
+    // error information.
+
+    #[derive(Debug)] // Required for printing with {:?}
+    enum MyError {
+        NotFound,
+        PermissionDenied,
+        InvalidInput(String),
+        Io(io::Error), // Add a variant to wrap `io::Error`
+    }
+
+    // Implement `From<io::Error>` for `MyError` to allow `?` operator to work
+    // when `io::Error` needs to be converted into `MyError`.
+    impl From<io::Error> for MyError {
+        fn from(error: io::Error) -> Self {
+            MyError::Io(error)
+        }
+    }
+
+    fn do_something_risky(value: i32) -> Result<String, MyError> {
+        if value == 0 {
+            Err(MyError::NotFound)
+        } else if value < 0 {
+            Err(MyError::PermissionDenied)
+        } else if value > 100 {
+            Err(MyError::InvalidInput(format!(
+                "Value {} is too large.",
+                value
+            )))
+        } else {
+            // Example of using a `?` operator that converts `io::Error` to `MyError`
+            let file_name = format!("data_{}.txt", value);
+            fs::write(&file_name, format!("Some data for {}", value))?; // Will convert io::Error to MyError::Io
+            Ok(format!("Operation successful with value: {}", value))
+        }
+    }
+
+    println!("\n--- Custom Error Types ---");
+
+    match do_something_risky(0) {
+        Ok(msg) => println!("{}", msg),
+        Err(e) => println!("Risky operation failed: {:?}", e),
+    }
+
+    match do_something_risky(-5) {
+        Ok(msg) => println!("{}", msg),
+        Err(e) => println!("Risky operation failed: {:?}", e),
+    }
+
+    match do_something_risky(150) {
+        Ok(msg) => println!("{}", msg),
+        Err(e) => println!("Risky operation failed: {:?}", e),
+    }
+
+    match do_something_risky(50) {
+        Ok(msg) => println!("{}", msg),
+        Err(e) => println!("Risky operation failed: {:?}", e),
+    }
+
+    // Clean up files created by do_something_risky
+    let _ = fs::remove_file("data_50.txt");
+
+    // -------------------------------------------------------------------------
+    // 9. Main Function Returning Result (`fn main() -> Result<(), E>`)
     // -------------------------------------------------------------------------
     // As seen at the beginning of this `main` function, Rust allows `main` to
     // return a `Result<(), E>`. This is extremely useful because it allows
