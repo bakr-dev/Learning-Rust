@@ -183,18 +183,54 @@ fn main() {
     // -------------------------------------------------------------------------
     // 11. Constants
     // -------------------------------------------------------------------------
-    // Constants are values that are bound to a name and are not allowed to
-    // change. They are declared using the `const` keyword. You must annotate
-    // the type of a constant. Constants can be declared in any scope,
-    // including global scope.  Constants must be initialized with a value
-    // that can be determined at compile time.
+    // Constants are values that are bound to a name and are immutable forever.
+    // Unlike variables, they cannot be made mutable with `mut`, and they cannot be shadowed.
 
-    const MAX_POINTS: u32 = 100_000; // Type annotation is mandatory
+    // How to declare a constant:
+    // You use the `const` keyword, followed by the constant's name (conventionally
+    // in SCREAMING_SNAKE_CASE), a colon, its mandatory type annotation, an equals sign,
+    // and finally, its value.
+
+    const MAX_POINTS: u32 = 100_000; // Type annotation (u32) is mandatory
     println!("Maximum points: {}", MAX_POINTS);
 
-    // Note: `let` with an uppercase name is a convention for variables that
-    // are intended to be immutable but are not compile-time constants.
-    //  Constants are implicitly static.
+    // Key characteristics of constants:
+    // - Immutability: Constants are *always* immutable. Unlike `let` variables,
+    //   they cannot be made mutable with `mut`, nor can they be shadowed by
+    //   a new variable with the same name within the same scope. Once declared,
+    //   their value is fixed for the entire program's execution.
+    // - Compile-Time Evaluation: Their values are computed and "baked into" the
+    //   executable at compile time. This means they must be initialized with a
+    //   constant expression that can be determined at compile time; you cannot
+    //   assign the result of a function call or any runtime computation to a constant.
+    // - Type Annotation: Explicit type annotation is mandatory. Rust's compiler
+    //   cannot infer the type of a constant.
+    // - Scope: Constants can be declared in any scope, including the global scope
+    //   (outside of any function), making them accessible throughout your entire
+    //   crate.
+
+    // Use Cases for Constants:
+    // - Fixed, Known Values: Ideal for numbers like `PI`, mathematical constants,
+    //   or any value that is inherently unchangeable (e.g., `SECONDS_IN_A_MINUTE`).
+    // - Global Configurations: Use them for values that are universally applicable
+    //   across your application and should never be modified (e.g., maximum limits,
+    //   specific error codes).
+    // - Readability and Maintainability: Using named constants instead of "magic
+    //   numbers" makes your code more understandable and easier to maintain. If
+    //   a constant value ever needs to change (which should be rare by definition
+    //   of a constant), you only change it in one place.
+    // - Performance Optimization: Because they are evaluated at compile time,
+    //   constants can sometimes lead to more optimized code, as their values are
+    //   directly inlined where they are used.
+
+    // Note: `let` with an uppercase name (e.g., `let MY_VAR = 10;`) is a
+    // convention sometimes used for variables that are intended to be immutable
+    // but are not compile-time constants. However, this is just a convention
+    // and doesn't enforce the same strictness as `const`.
+    // Constants are implicitly static, meaning they exist for the entire duration
+    // of the program and are stored directly in the final binary. This is
+    // distinct from `static mut` (mutable static variables), which require
+    // `unsafe` Rust to modify due to potential data race issues.
 
     // -------------------------------------------------------------------------
     // 12. Tuples

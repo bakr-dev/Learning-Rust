@@ -1,20 +1,25 @@
-#![deny(clippy::all)]
+// #![deny(clippy::all)]
 // #[derive(PartialEq)]
+// #[derive(Debug)]
 
 fn main() {
-    println!("\n--- `map` for Ok Values ---");
-    let num_str = "123";
-    let parsed_and_doubled = num_str.parse::<i32>().map(|num| num * 2); // Doubles the number if parsing succeeds
+    let arr = [1, 2, 3, 4, 5];
+    let ptr = arr.as_ptr(); // Get a raw pointer to the first element
 
-    match parsed_and_doubled {
-        Ok(val) => println!("Parsed and doubled: {}", val),
-        Err(e) => eprintln!("Error parsing: {}", e),
-    }
+    unsafe {
+        // Accessing the first element
+        println!("First element: {}", *ptr);
 
-    let bad_num_str = "abc";
-    let parsed_and_doubled_err = bad_num_str.parse::<i32>().map(|num| num * 2); // Error passes through
-    match parsed_and_doubled_err {
-        Ok(val) => println!("Parsed and doubled: {}", val),
-        Err(e) => eprintln!("Error parsing 'abc': {}", e),
+        // Moving to the second element (ptr + 1)
+        let second_element_ptr = ptr.add(1);
+        println!("Second element (ptr + 1): {}", *second_element_ptr);
+
+        // Moving to the fourth element (ptr + 3)
+        let fourth_element_ptr = ptr.add(3);
+        println!("Fourth element (ptr + 3): {}", *fourth_element_ptr);
+
+        // Attempting to access out of bounds (dangerous!)
+        // let out_of_bounds_ptr = ptr.add(10);
+        // println!("Out of bounds access: {}", *out_of_bounds_ptr); // UB
     }
 }
