@@ -125,7 +125,7 @@ fn main() {
     );
 
     // -------------------------------------------------------------------------
-    // 4. Function Pointers
+    // 4. Function Pointers or function as value (Pass functions as values ​​are done by Pointers)
     // -------------------------------------------------------------------------
     // Rust also has function pointers, which allow you to treat functions
     // as values that can be passed around and called dynamically.
