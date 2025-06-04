@@ -55,6 +55,24 @@ fn main() {
     // s3 is still valid, because r1 and r2 only borrowed its data.
 
     // -------------------------------------------------------------------------
+    // 3.1 Dereferencing - More Details on Pointers Explanation file
+    // -------------------------------------------------------------------------
+    // Dereferencing allows you to access the value that a reference points to.
+    // You use the `*` operator to dereference a reference.
+
+    let num = 10;
+    let num_ref = &num; // num_ref is an immutable reference to num
+    let dereferenced_num = *num_ref; // dereferenced_num now holds the value 10
+    println!("Original number: {}", num);
+    println!("Reference to number: {}", num_ref);
+    println!("Dereferenced number: {}", dereferenced_num);
+
+    let mut mutable_num = 20;
+    let mutable_num_ref = &mut mutable_num; // mutable_num_ref is a mutable reference
+    *mutable_num_ref += 5; // Dereference to modify the value
+    println!("Modified number: {}", mutable_num);
+
+    // -------------------------------------------------------------------------
     // 4. Mutable References
     // -------------------------------------------------------------------------
     // You can also create mutable references, which allow you to change the value.
@@ -85,14 +103,25 @@ fn main() {
 
     // println!("s5: {}", s5); // This would be an error: `s5` is not in scope
 
+    // This Example is borrowing, not ownership transfer will see again on point 12
+    let s9 = String::from("shared data");
+
+    {
+        let s10 = &s9; // This is borrowing, not ownership transfer
+        print!("{}", s9);
+        print!("{}", s10);
+    }
+    // print!("{}", s10); // Error s10 goes out of scope, butt s9 still valid
+    print!("{}", s9); // Still working 
+
     // -------------------------------------------------------------------------
     // 6. Accessing Block Variables Outside (Not Directly Possible)
     // -------------------------------------------------------------------------
     // Variables declared inside a block (delimited by `{}`) are only accessible within that block.
     // To use a value from inside a block outside, you need to either:
-    //    - Return it from a function.
-    //    - Declare it outside the block and modify it inside (if mutable).
-    //    - Move the ownership of the variable.
+    //      - Return it from a function.
+    //      - Declare it outside the block and modify it inside (if mutable).
+    //      - Move the ownership of the variable.
 
     let mut s6 = String::new();
     {
@@ -193,6 +222,19 @@ fn main() {
 
     println!("s14: {}", s14);
     println!("r_s14: {}", r_s14);
+
+    // This Example is borrowing, not ownership transfer
+    let s9 = String::from("shared data");
+
+    {
+        let s10 = &s9; // This is borrowing, not ownership transfer
+        print!("{}", s9);
+        print!("{}", s10);
+    }
+    // print!("{}", s10); // Error s10 goes out of scope, butt s9 still valid
+    print!("{}", s9); // Still working 
+
+    // This Example Is Important for upcoming Point
 
     // -------------------------------------------------------------------------
     // 13. References and Function Parameters
@@ -322,10 +364,10 @@ fn main() {
     // Example showing the error case
     // {
     // let mut data2 = vec![10, 20, 30];
-    //     let immutable_ref1 = &data2[0];
-    //     let mutable_ref2 = &mut data2; // Error: cannot borrow `data2` as mutable because it is also borrowed as immutable
-    //     println!("Immutable ref: {}", immutable_ref1);
-    //     mutable_ref2.push(40);
+    //      let immutable_ref1 = &data2[0];
+    //      let mutable_ref2 = &mut data2; // Error: cannot borrow `data2` as mutable because it is also borrowed as immutable
+    //      println!("Immutable ref: {}", immutable_ref1);
+    //      mutable_ref2.push(40);
     // }
 
     // -------------------------------------------------------------------------
@@ -354,8 +396,8 @@ fn main() {
 
     // Example of a function that would create a dangling reference (and Rust will prevent it):
     // fn dangle() -> &String { // Returns a reference to a String
-    //     let s = String::from("hello"); // s is created inside the function
-    //     &s // Returns a reference to s. s will be dropped when the function ends.
+    //      let s = String::from("hello"); // s is created inside the function
+    //      &s // Returns a reference to s. s will be dropped when the function ends.
     // }
     //
     // // let dangling_ref = dangle(); // dangling_ref would be pointing to invalid memory
@@ -408,8 +450,8 @@ fn main() {
     //    - Example:
     //      ```rust
     //      let s = String::from("world");
-    //      let r1 = &s;        // Immutable borrow
-    //      let r2 = &s;        // Another immutable borrow
+    //      let r1 = &s;         // Immutable borrow
+    //      let r2 = &s;         // Another immutable borrow
     //      let r3 = &mut s;   // Mutable borrow (only if no immutable borrows exist)
     //      ```
 

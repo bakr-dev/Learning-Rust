@@ -50,10 +50,28 @@ fn main() {
     // Rule 1: Each input lifetime parameter gets its own lifetime parameter.
     // (e.g., `fn foo(x: &i32)` becomes `fn foo<'a>(x: &'a i32)`)
 
+    // In Rust, the 'a in fn foo<'a>(...) declares a generic lifetime parameter,
+    // while the 'a in x: &'a i32 uses that declared lifetime to specify how long the reference x must be valid.
+
+    // Using Lifetimes
+
+    // When you write x: &'a i32, you're telling the Rust compiler:
+
+    //     "The parameter x is a reference to an i32."
+    //     "This reference x must be valid for the lifetime 'a."
+
+    // This means that whatever data x points to must live at least as long as the lifetime 'a.
+    // The compiler uses this information to ensure that x doesn't become a "dangling pointer"
+    // or – a reference to memory that has already been deallocated.
+
     // Rule 2: If there is exactly one input lifetime parameter, that lifetime
     // is assigned to all output lifetime parameters.
     fn first_word_inferred(s: &str) -> &str {
-        // Rust infers 'a here: fn first_word_inferred<'a>(s: &'a str) -> &'a str
+        // Rust infers 'a here as:
+        // fn first_word_inferred<'a>(s: &'a str) -> &'a str
+        //  <'a>: Declares a generic lifetime parameter 'a.
+        //  s: &'a str: Says the input reference s lives for lifetime 'a.
+        //  -> &'a str: Says the output reference also lives for lifetime 'a.
         let bytes = s.as_bytes();
 
         for (i, &item) in bytes.iter().enumerate() {
