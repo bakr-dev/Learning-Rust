@@ -306,14 +306,33 @@ fn main() {
     // `and_then()` (also known as flat_map) is similar but the closure must return an `Option`.
     // It's used for chaining operations that might also fail (return `None`).
 
-    println!("\n--- Mapping an Option (`map`, `and_then`) ---");
-    let initial_value = Some(10);
-    let mapped_value = initial_value.map(|x| x * 2); // Some(20)
-    println!("Mapped value: {:?}", mapped_value);
+    println!("\n--- Mapping with `map` ---");
+    // Case 1: Some(T) -> Some(U)
+    let some_number = Some(10);
+    // The `map` closure is executed because `some_number` is `Some`.
+    // `10` is passed to the closure, `10 * 2` computes `20`.
+    // The result `20` is then wrapped back into `Some`, yielding `Some(20)`.
+    let doubled_number = some_number.map(|x| x * 2); // Closure executed, 10 * 2 = 20
+    println!("Doubled Some(10): {:?}", doubled_number); // Output: Doubled Some(10): Some(20)
 
-    let none_value: Option<i32> = None;
-    let mapped_none = none_value.map(|x| x * 2); // None
-    println!("Mapped none: {:?}", mapped_none);
+    // Case 2: None -> None
+    let none_number: Option<i32> = None;
+    // The `map` closure is NOT executed because `none_number` is `None`.
+    // `map` simply returns `None` directly, preserving its state.
+    let doubled_none = none_number.map(|x| x * 2); // Closure NOT executed
+    println!("Doubled None: {:?}", doubled_none); // Output: Doubled None: None
+
+    // When you use the map() method on an Option<T> (where T is the type of the value inside the Option):
+
+    // If the Option is Some(value):
+    // The map() method takes the value out of the Some variant.
+    // It then applies the provided closure (the |x| x * 2 in your example) to this value.
+    // The result of the closure's execution (e.g., 10 * 2 = 20) is then wrapped back into a new Some variant.
+    // So, Some(10).map(|x| x * 2) results in Some(20). The Some "wrapper" is preserved, and only the inner value is transformed.
+    // If the Option is None:
+    // The map() method does not execute the provided closure.
+    // It simply returns None as is.
+    // So, None.map(|x| x * 2) results in None. The None remains None, and no transformation occurs.
 
     // Example with `and_then`: Simulating a fallible division
     fn safe_divide(numerator: f64, denominator: f64) -> Option<f64> {
