@@ -23,39 +23,55 @@ fn main() {
     // is the type of the items the iterator produces. It returns `Some(item)`
     // when there are more items, and `None` when the iteration is complete.
 
-    // Example of a custom iterator (for conceptual understanding)
+    // Example of a custom iterator (for conceptual understanding) :
+
+    // Define a simple struct to hold our counter's state
     struct Counter {
         count: u32,
     }
 
     impl Counter {
+        // A constructor function to create a new Counter instance
         fn new() -> Counter {
             Counter { count: 0 }
         }
     }
 
+    // Implement the `Iterator` trait for our `Counter` struct
     impl Iterator for Counter {
-        type Item = u32; // This iterator will produce `u32` items.
+        // We specify that this iterator will produce `u32` type items
+        type Item = u32;
 
+        // This is the core `next` method required by the `Iterator` trait
         fn next(&mut self) -> Option<Self::Item> {
+            // Check if we still have numbers to count
             if self.count < 5 {
-                self.count += 1;
-                Some(self.count) // Return the next item
+                self.count += 1; // Increment the counter
+                Some(self.count) // Wrap the current count in `Some` and return it
             } else {
-                None // No more items
+                // If the count has reached 5, we return `None` to signal the end of iteration
+                None
             }
         }
     }
 
     println!("\n--- Custom Iterator Example ---");
-    let mut counter = Counter::new();
-    println!("Next: {:?}", counter.next()); // Some(1)
-    println!("Next: {:?}", counter.next()); // Some(2)
-    for i in counter {
-        // The for loop consumes the rest of the iterator
-        println!("Remaining: {}", i); // 3, 4, 5
-    }
+    let mut counter = Counter::new(); // Create a new Counter instance
 
+    // Manually call `next()` to get individual items
+    println!("Next: {:?}", counter.next()); // Output: Next: Some(1)
+    println!("Next: {:?}", counter.next()); // Output: Next: Some(2)
+
+    // A `for` loop is a common way to consume an iterator.
+    // It repeatedly calls `next()` until `None` is returned.
+    for i in counter {
+        // This loop continues from where the manual calls left off (count is now 2)
+        println!("Remaining: {}", i);
+    }
+    // Expected Output:
+    // Remaining: 3
+    // Remaining: 4
+    // Remaining: 5
     // -------------------------------------------------------------------------
     // 2. Iterating Over Arrays
     // -------------------------------------------------------------------------
