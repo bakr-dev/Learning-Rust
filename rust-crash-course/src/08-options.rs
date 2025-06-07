@@ -240,7 +240,11 @@ fn main() {
     use std::time::Duration;
 
     fn get_optional_value(should_be_some: bool) -> Option<i32> {
-        if should_be_some { Some(50) } else { None }
+        if should_be_some {
+            Some(50) // if true
+        } else {
+            None // if false
+        }
     }
 
     fn main() {
