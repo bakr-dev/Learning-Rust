@@ -124,7 +124,7 @@ fn main() {
     impl Rectangle {
         // Calculates the area of the rectangle.
         fn area(&self) -> u32 {
-            //Immutable borrow of self
+            //Immutable borrow of self, self here is the instance that we use area method from it
             self.width * self.height
         }
 
@@ -147,6 +147,12 @@ fn main() {
             self.width = new_width;
         }
     }
+    // Note that to use set_width, the instance must be declared as mutable to allow calling the mutable set_width method.
+    // let mut rect1 = Rectangle {
+    //     width: 30,
+    //     height: 50,
+    // };
+    // rect1.set_width(35); //Change width using a mutable method.
 
     struct Color(i32, i32, i32); // RGB Color
 

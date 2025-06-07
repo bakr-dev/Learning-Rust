@@ -85,6 +85,7 @@ fn main() {
     println!("\n--- Unwrapping Safely with `if let` ---");
     // Unwrapping here meaning access inner value which is string "blue"
     let favorite_color = Some(String::from("blue"));
+    // here rust read favorite_color as Some() hold "string value" which can be access as color variable
     if let Some(color) = favorite_color {
         println!("My favorite color is {}", color); // Code executed only if `favorite_color` is `Some`
     } else {
@@ -177,9 +178,9 @@ fn main() {
     // a. Nested `match`
     match (x_coord, y_coord, z_coord) {
         // Match on a tuple of Options
-        (Some(x), Some(y), Some(z)) => println!("All coordinates present: ({}, {}, {})", x, y, z),
-        (Some(x), Some(y), None) => println!("2D coordinates present: ({}, {})", x, y),
-        _ => println!("Some coordinates are missing."),
+        (Some(x), Some(y), Some(z)) => println!("All coordinates present: ({}, {}, {})", x, y, z), // case 1
+        (Some(x), Some(y), None) => println!("2D coordinates present: ({}, {})", x, y), // case 2
+        _ => println!("Some coordinates are missing."),                                 // case 3
     }
 
     // b. Chaining with `and_then` (more functional style)
@@ -235,20 +236,49 @@ fn main() {
     // which is only executed if the `Option` is `None`. This is more efficient
     // if computing the default value is expensive.
 
-    println!("\n--- Unwrap with Functions (`unwrap_or_else`) ---");
-    let expensive_default = || {
-        println!("Computing expensive default...");
-        // Simulate expensive computation
-        std::thread::sleep(std::time::Duration::from_millis(100));
-        99
-    };
+    use std::thread::sleep;
+    use std::time::Duration;
 
-    let val1 = Some(50).unwrap_or_else(expensive_default); // Closure not executed
-    println!("Value 1: {}", val1);
+    fn get_optional_value(should_be_some: bool) -> Option<i32> {
+        if should_be_some { Some(50) } else { None }
+    }
 
-    let val2: Option<i32> = None;
-    let val2_result = val2.unwrap_or_else(expensive_default); // Closure IS executed
-    println!("Value 2: {}", val2_result);
+    fn main() {
+        println!("\n--- Unwrap with Functions (`unwrap_or_else`) ---");
+
+        // This is our closure function that simulates an expensive computation
+        let expensive_default = || {
+            println!("Computing expensive default...");
+            // Simulate expensive computation
+            sleep(Duration::from_millis(100));
+            99
+        };
+
+        // Case 1: Option is Some. The closure is NOT executed.
+        println!("\n--- Case 1: Option is Some ---");
+        let val1 = get_optional_value(true).unwrap_or_else(expensive_default);
+        println!("Value 1: {}", val1); // Output will be 50
+
+        // Case 2: Option is None. The closure IS executed.
+        println!("\n--- Case 2: Option is None ---");
+        let val2 = get_optional_value(false).unwrap_or_else(expensive_default);
+        println!("Value 2: {}", val2); // Output will be 99 (after "Computing expensive default...")
+
+        // You can also demonstrate a scenario where the Option is created dynamically
+        // based on some condition, making `unwrap_or_else` particularly useful.
+        println!("\n--- Case 3: Dynamic Option ---");
+        let user_input: Option<String> = Some("hello".to_string()); // Imagine this comes from user input
+        let processed_value: Option<i32> = user_input.and_then(|s| s.parse::<i32>().ok()); // Try to parse to i32
+
+        let final_result = processed_value.unwrap_or_else(expensive_default);
+        println!("Final Result: {}", final_result);
+
+        let user_input_none: Option<String> = None;
+        let processed_value_none: Option<i32> = user_input_none.and_then(|s| s.parse::<i32>().ok());
+
+        let final_result_none = processed_value_none.unwrap_or_else(expensive_default);
+        println!("Final Result (None case): {}", final_result_none);
+    }
 
     // -------------------------------------------------------------------------
     // 8. Checking if Option is Some or None (`is_some`, `is_none`)

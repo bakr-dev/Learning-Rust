@@ -143,8 +143,11 @@ fn main() {
     process_message(msg2);
     process_message(msg3);
     process_message(msg4);
+    process_message(msg5);
     // Note: msg5 was moved into process_message, so we can't reuse it.
+    // process_message(msg5); // Error
     // If we wanted to, we'd need to clone it or pass a reference.
+
     let user_bob = User {
         id: 2,
         name: String::from("Bob"),
@@ -163,6 +166,15 @@ fn main() {
     } else {
         println!("This message was not a 'Write' message.");
     }
+
+    // It attempts to match another_msg against the Message::Write variant.
+    // If the match is successful, the String value inside Message::Write is extracted and bound to the new variable content.
+    // println!("Quick write message found: \"{}\"", content);: This line is executed only if
+    // the if let match is successful, printing the extracted content.
+    // else { ... }: If another_msg is not a Message::Write variant (e.g., if it were Message::Quit or Message::ChangeColor), the else block
+    // would be executed.
+
+    // This is a concise way to handle a single successful match without the verbosity of a full match statement when you only care about one specific variant.
 
     let third_msg = Message::Quit;
     if let Message::Move { x, y } = third_msg {
